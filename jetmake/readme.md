@@ -1,8 +1,12 @@
 # About
-JetMake is a simple cmake infrastructure which is
+JetMake is a simple cmake macros infrastructure which is
 indented to simplify compound C++ projects development.
-While using poor cmake methods you should collect sources manually,
-add includes and libs, control linker and compile flags, think about directories structure.
+While using poor cmake methods you should do a lot of things manually:
+* collect sources manually
+* add includes and libs
+* control linker and compile flags
+* develop directories structure
+
 With Jetmake you just put sources into folder with your lib or tool name and it
 recognizes it as a project.
 The only thing you need is to follow jetmake directories structure.
