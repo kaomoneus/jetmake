@@ -3,14 +3,16 @@ JetMake is a simple cmake infrastructure which is
 indented to simplify compound C++ projects development.
 While using poor cmake methods you should collect sources manually,
 add includes and libs, control linker and compile flags, think about directories structure.
-With Jetmake you just put sources into folder with you lib or tool name and it
+With Jetmake you just put sources into folder with your lib or tool name and it
 recognizes it as a project.
 The only thing you need is to follow jetmake directories structure.
 
 ## How to use
 As you could notice current repo contains some demo project. Everything related to
-jetmake is placed in subdirectory with same name. And this is the only thing you need to
+jetmake is placed in "jetmake" subdirectory. And this is directory is the only thing you need to
 deploy your own project.
+
+### "Project" is a project tree
 When we say "project" we mean project tree with subprojects included.
  
 ### What should you do on top level?
@@ -46,9 +48,6 @@ So after all we have following directories structure
     |
     |-CMakeLists.txt        # cmake root project file, with set of jetmake macros.
     
-#### CMakeLists.txt for tool
-TODO
-
 ### How to add library subproject (lib)
 
 Steps are very similar/
@@ -72,7 +71,89 @@ So, after all we have following directories structure
     |
     |-CmakeLists.txt        # cmake root project file, with set of jetmake macros.
 
-#### CMakeLists.txt for lib
-TODO
- 
- 
+### CMakeLists.txt for tools and libs
+
+#### Header
+
+In the beginning of file you should include jetmake macros, and run jetmake initializer macro.
+
+For tools:
+
+    include("${CMAKE_SOURCE_DIR}/jetmake/common.cmake")
+    include("${CMAKE_SOURCE_DIR}/jetmake/tools/tools.cmake")
+
+    jetmakeProject()
+
+For lib (almost same):
+
+    include("${CMAKE_SOURCE_DIR}/jetmake/common.cmake")
+    include("${CMAKE_SOURCE_DIR}/jetmake/lib/lib.cmake")
+
+    jetmakeProject()
+
+#### Subproject body: dependencies and other properies
+
+In subproject body you may define dependencies list, compiler definitions list and so on.
+Features set will be probably extendend. Ideally it would be good to customize next things:
+
+* Dependencies to other subrojects (libs) (done)
+* Dependencies to external libs (done)
+* Compiler definitions (done)
+* Other compiler flags (TODO)
+* Linker flags (done)
+
+It is better to look into example CMakeLists files in jetmake subdirectory for details.
+Here we just put example of dependcies list. Just to demonstrate how simple it should
+be for the rest of project properties.
+
+##### Dependencies
+
+    startLibDependencies()                  # Dependencies open tag
+        setHeadersLibDependency(StdTypes)   # Dependency to headers only lib
+        setLibDependency(Panic)             # Dependency to static library
+        setExternalLibDependency(jsoncpp)   # Dependency to external library
+    endLibDependencies()                    # Dependencies close tag
+
+#### Subproject close tag
+
+Once you defined your project it is necessary to instruct jetmake that you're done with it.
+
+For tool:
+
+    setupTool(<ProjectName>)
+
+
+For lib:
+
+    setupLib(<ProjectName>)
+
+#### Subproject example
+
+Below we take a look at simple CMakeLists.txt file for "tool" subproject.
+
+##### Tool subproject CMakeLists.txt example
+
+    include("${CMAKE_SOURCE_DIR}/jetmake/common.cmake")
+    include("${CMAKE_SOURCE_DIR}/jetmake/tools/tools.cmake")
+
+    jetmakeProject()
+
+    startLibDependencies()
+        setHeadersLibDependency(StdTypes)
+        setLibDependency(Panic)
+        setExternalLibDependency(jsoncpp)
+    endLibDependencies()
+
+    setProjectCompileDefinitions(Foo TEST_COMPILE_DEFINITION)
+
+    setupTool(Foo)
+
+# What else?
+
+Currently we would recommend reader to look into code or send requests to the author.
+So far there is only only jetmake user. Guess who? ;-) And thus it is extended in
+very narrow direction.
+
+Hopefully it will help somebody else as well!
+
+Cheers!
