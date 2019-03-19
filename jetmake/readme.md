@@ -44,8 +44,8 @@ are "libs".
 1. In "tools" directory create a directory with exact name of your tool. E.g. "Foo"
 2. From jetmake subdirectory copy "CMakeLists-tools-example.txt" into it,
    and rename into CMakeLists.txt.
-3. Put all sources and private headers in "impl" subfolder.
-4. Put all public headers in "include" subfolder.
+3. Put all sources and private headers into "impl" subfolder.
+4. Put all public headers into "include" subfolder.
 
 So after all we have following directories structure
 
@@ -66,8 +66,8 @@ Steps are very similar/
 1. In "lib" directory create a directory with exact name of your tool. E.g. "Panic"
 2. From jetmake subdirectory copy "CMakeLists-lib-example.txt" into it,
    and rename into CMakeLists.txt.
-3. Put all sources and private headers in "impl" subfolder.
-4. Put all public headers in "include" subfolder.
+3. Put all sources and private headers into "impl" subfolder.
+4. Put all public headers into "include" subfolder.
 
 So, after all we have following directories structure
 
@@ -75,7 +75,7 @@ So, after all we have following directories structure
     |-jetmake       <dir>
     |-lib           <dir>
     | |-include     <dir>   # contains public .h files
-    | |-impl <dir>          # contains .cpp, and private .h files
+    | |-impl.       <dir>   # contains .cpp, and private .h files
     | |-CMakeLists.txt      # cmake tool project file, with set of jetmake macros.
     |
     |-tools         <dir>
@@ -167,15 +167,16 @@ Toolchain files are located in "jetmake/toolchains" directory.
 
 ### Example of cmake command:
 
-    cmake <path-to-project>
-    -DCMAKE_TOOLCHAIN_FILE=<path-to-project>/jetmake/toolchains/host-x86_64-darwin/target-x86_64-darwin/toolchain.cmake
-    -DCMAKE_INSTALL_PREFIX=$PWD/install
+    cmake <path-to-project>\
+    -DCMAKE_TOOLCHAIN_FILE=\
+    <path-to-project>/jetmake/toolchains/host-x86_64-darwin/target-x86_64-darwin/toolchain.cmake\
+    -DCMAKE_INSTALL_PREFIX=$PWD/install\
     -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug
 
 # What else?
 
 Currently we would recommend reader to look into code or send requests to the author.
-So far there is only only jetmake user. Guess who? ;-) And thus it is extended in
+So far there is only one jetmake user. Guess who? ;-) And thus it is extended in
 very narrow direction.
 
 Hopefully it will help somebody else as well!
