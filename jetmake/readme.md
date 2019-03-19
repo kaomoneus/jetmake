@@ -8,7 +8,7 @@ JetMake is a simple cmake macros infrastructure which is
 indented to simplify compound C++ projects development.
 
 While using poor cmake methods you should do a lot of things manually:
-* collect sources manually (the is aux_source_directory, but it is not recursive)
+* collect sources manually (there is aux_source_directory, but it is not recursive)
 * add includes and libs (lib + include = dependency, we usually add them together) 
 * control linker and compile flags
 * develop directories structure
