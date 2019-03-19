@@ -5,13 +5,18 @@ endmacro()
 
 macro (getSubVariable varValue parent varName)
     getSubVariableFullName(varFullName ${parent} ${varName})
+    # trace("Trying to get ${varFullName}")
     if (DEFINED ${varFullName})
         set(${varValue} ${${varFullName}})
+        # trace("${varFullName} is ${${varValue}}.")
+    else()
+        # trace("${varFullName} is not defined.")
     endif()
 endmacro()
 
 macro (setSubVariable parent varName varValue)
     getSubVariableFullName(varFullName ${parent} ${varName})
+    # trace("Set ${varFullName} = ${varValue}")
     set(${varFullName} ${varValue})
 endmacro()
 

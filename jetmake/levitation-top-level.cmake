@@ -3,14 +3,6 @@ include ("${CMAKE_SOURCE_DIR}/jetmake/lib/libs.cmake")
 include ("${CMAKE_SOURCE_DIR}/jetmake/tools/tools.cmake")
 include ("${CMAKE_SOURCE_DIR}/jetmake/subproject-utils.cmake")
 
-macro (getLevitationProjectOptRootDir var)
-    set(${var} "${CMAKE_SOURCE_DIR}/opt-${PLATFORM_SUFFIX}")
-endmacro()
-
-macro (getLevitationProjectExternalLibsDir var)
-    set(${var} "${CMAKE_SOURCE_DIR}/src/lib-${PLATFORM_SUFFIX}")
-endmacro()
-
 macro (getLivitationAppRootRel var)
     set(${var} "opt/${CMAKE_PROJECT_NAME}")
 endmacro()
@@ -133,7 +125,6 @@ macro(findLibs libsFound osLibraries)
 endmacro()
 
 macro (setupCommonLibraries)
-
     if (PLATFORM_LINUX_X86_64)
         # set(PLATFORM_SUFFIX "linux-x86_64")
         set (OS_LIBRARIES ${OS_LIBRARIES}
@@ -162,8 +153,9 @@ macro (setupCommonLibraries)
     getLevitationCommonLibsVarName(commonLibsVarName)
     findLibs(${commonLibsVarName} ${OS_LIBRARIES})
 
-    getLevitationProjectExternalLibsDir(externalLibsDir)
-    addLevitationCommonLibs(${externalLibsDir}/libjsoncpp.a)
+    # FIXME: We perhaps don't need this section at all
+    # getLevitationProjectExternalLibsDir(externalLibsDir)
+    # addLevitationCommonLibs(${externalLibsDir}/libjsoncpp.a)
 
 endmacro()
 

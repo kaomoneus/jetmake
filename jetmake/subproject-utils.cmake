@@ -128,12 +128,45 @@ endmacro()
 
 ##
 
+macro (getLevitationExternalDepsDir var)
+    set(${var} "${CMAKE_SOURCE_DIR}/external-deps")
+endmacro()
+
+macro (getLevitationExternalDepsIncludeDir var dependencyName)
+    getLevitationExternalDepsDir(externalDepsDir)
+    set(${var} "${externalDepsDir}/${dependencyName}/include")
+endmacro()
+
+macro (getLevitationExternalDepsLibDir var dependencyName)
+    getLevitationExternalDepsDir(externalDepsDir)
+    set(${var} "${externalDepsDir}/${dependencyName}/lib/${TARGET_TRIPLE}")
+endmacro()
+
+
 macro(setLibDependency dependencyLib)
     debug("Set lib dependency ${dependencyLib}")
     getProjectIncludeDir(LIB NEW_INCLUDE ${dependencyLib})
     trace("Added include (as dependency): ${NEW_INCLUDE}")
     set (EXTRA_INCLUDE_DIRS ${EXTRA_INCLUDE_DIRS} ${NEW_INCLUDE})
     set (LEVITATION_DEPENDENCY_LIBS ${LEVITATION_DEPENDENCY_LIBS} ${dependencyLib})
+endmacro()
+
+macro(setExternalLibDependency dependencyLib)
+    debug("Set external lib dependency ${dependencyLib}")
+
+    getLevitationExternalDepsLibDir(libDir ${dependencyLib})
+    set(libPath ${libDir}/lib${dependencyLib}.a)
+
+    getLevitationExternalDepsIncludeDir(includeDir ${dependencyLib})
+
+    set (EXTRA_INCLUDE_DIRS ${EXTRA_INCLUDE_DIRS} ${includeDir})
+    trace("Added include (as external dependency): ${includeDir}")
+
+    set (LEVITATION_DEPENDENCY_LIBS ${LEVITATION_DEPENDENCY_LIBS}
+        ${libPath}
+    )
+    trace("Added lib (as external dependency): ${libPath}")
+
 endmacro()
 
 macro(setHeadersLibDependency dependencyLib)
@@ -148,12 +181,12 @@ macro (setupTargetCompileDefinitions projectName)
     getProjectCompileDefinitions(compileDefinitions ${projectName})
     getProjectCompileDefinitionsDebug(compileDefinitionsDebug ${projectName})
 
-    if (DEFINED ${compileDefinitions})
+    if (DEFINED compileDefinitions)
         debug("Setting additional definitions for ${projectName}: ${compileDefinitions}")
         set_directory_properties(PROPERTIES COMPILE_DEFINITIONS "${COMMON_COMPILE_DEFINITIONS};${compileDefinitions};")
     endif()
 
-    if(DEFINED ${compileDefinitionsDebug})
+    if(DEFINED compileDefinitionsDebug)
         debug("Setting additional DEBUG definitions for ${projectName}: ${compileDefinitionsDebug}")
         set_directory_properties(PROPERTIES COMPILE_DEFINITIONS_DEBUG "${COMMON_COMPILE_DEFINITIONS_DEBUG};${compileDefinitionsDebug};")
     endif()
