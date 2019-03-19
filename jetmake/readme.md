@@ -1,6 +1,12 @@
 # About
+## What for?
+For C++ developers who want to create new project at easy. Or just add new subproject.
+CMake is very powerful and yet sometimes... a bit complicated.
+
+## So what is jetmake about?
 JetMake is a simple cmake macros infrastructure which is
 indented to simplify compound C++ projects development.
+
 While using poor cmake methods you should do a lot of things manually:
 * collect sources manually
 * add includes and libs
@@ -9,30 +15,31 @@ While using poor cmake methods you should do a lot of things manually:
 
 With Jetmake you just put sources into folder with your lib or tool name and it
 recognizes it as a project.
+
 The only thing you need is to follow jetmake directories structure.
 
-## How to use
+# How to use
 As you could notice current repo contains some demo project. Everything related to
-jetmake is placed in "jetmake" subdirectory. And this is directory is the only thing you need to
+jetmake is placed in "jetmake" subdirectory. "jetmake" subdir is the only thing you need to
 deploy your own project.
 
-### "Project" is a project tree
+## "Project" is a project tree
 When we say "project" we mean project tree with subprojects included.
  
-### What should you do on top level?
+## What should you do on top level?
 1. Create folder for your project.
 2. Copy jetmake directory into it.
 3. From jetmake subdir copy CMakeLists-example.txt into your project root dir, and
    rename it into CMakeLists.txt.
    
-### Tools and libs
+## Tools and libs
 In jetmake all executable sub-projects are called "tools".
 While all library projects
 are "libs".
 * Tools are located in "tools" subdirectory.
 * Libs are located in "lib" subdirectory.
    
-### How to add executable subproject (tool)
+## How to add executable subproject (tool)
 
 1. In "tools" directory create a directory with exact name of your tool. E.g. "Foo"
 2. From jetmake subdirectory copy "CMakeLists-tools-example.txt" into it,
@@ -52,7 +59,7 @@ So after all we have following directories structure
     |
     |-CMakeLists.txt        # cmake root project file, with set of jetmake macros.
     
-### How to add library subproject (lib)
+## How to add library subproject (lib)
 
 Steps are very similar/
 
@@ -75,9 +82,9 @@ So, after all we have following directories structure
     |
     |-CmakeLists.txt        # cmake root project file, with set of jetmake macros.
 
-### CMakeLists.txt for tools and libs
+## CMakeLists.txt for tools and libs
 
-#### Header
+### Header
 
 In the beginning of file you should include jetmake macros, and run jetmake initializer macro.
 
@@ -95,7 +102,7 @@ For lib (almost same):
 
     jetmakeProject()
 
-#### Subproject body: dependencies and other properies
+### Subproject body: dependencies and other properies
 
 In subproject body you may define dependencies list, compiler definitions list and so on.
 Features set will be probably extendend. Ideally it would be good to customize next things:
@@ -110,7 +117,7 @@ It is better to look into example CMakeLists files in jetmake subdirectory for d
 Here we just put example of dependcies list. Just to demonstrate how simple it should
 be for the rest of project properties.
 
-##### Dependencies
+#### Dependencies
 
     startLibDependencies()                  # Dependencies open tag
         setHeadersLibDependency(StdTypes)   # Dependency to headers only lib
@@ -118,7 +125,7 @@ be for the rest of project properties.
         setExternalLibDependency(jsoncpp)   # Dependency to external library
     endLibDependencies()                    # Dependencies close tag
 
-#### Subproject close tag
+### Subproject close tag
 
 Once you defined your project it is necessary to instruct jetmake that you're done with it.
 
@@ -131,11 +138,11 @@ For lib:
 
     setupLib(<ProjectName>)
 
-#### Subproject example
+### Subproject example
 
 Below we take a look at simple CMakeLists.txt file for "tool" subproject.
 
-##### Tool subproject CMakeLists.txt example
+#### Tool subproject CMakeLists.txt example
 
     include("${CMAKE_SOURCE_DIR}/jetmake/common.cmake")
     include("${CMAKE_SOURCE_DIR}/jetmake/tools/tools.cmake")
@@ -151,6 +158,19 @@ Below we take a look at simple CMakeLists.txt file for "tool" subproject.
     setProjectCompileDefinitions(Foo TEST_COMPILE_DEFINITION)
 
     setupTool(Foo)
+
+## Toolchains
+Jetmake considers everything as a cross builds. So in order to configure build directory
+you should pick proper toolchain file.
+
+Toolchain files are located in "jetmake/toolchains" directory.
+
+### Example of cmake command:
+
+    cmake <path-to-project>
+    -DCMAKE_TOOLCHAIN_FILE=<path-to-project>/jetmake/toolchains/host-x86_64-darwin/target-x86_64-darwin/toolchain.cmake
+    -DCMAKE_INSTALL_PREFIX=$PWD/install
+    -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug
 
 # What else?
 
