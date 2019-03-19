@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-project (levitation)
+project (jetmakeDemo)
 
 include("jetmake/log.cmake")
 include("jetmake/levitation-top-level.cmake")
@@ -22,9 +22,9 @@ set(LEVITATION_LOG_LEVEL ${LEVITATION_TRACE_LEVEL})
 
 # TODO: End of "Move to project related file"
 
-info (" |  =====================================  | ")
-info ("-L-              Levitation               -L-")
-info (" |  =====================================  | ")
+info ("=====================================")
+info ("        Jetmake Demo Project         ")
+info ("=====================================")
 info ("    Started build for version: ${LEVITATION_VERSION}")
 
 setupCompileFlags()
