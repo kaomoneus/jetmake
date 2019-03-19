@@ -1,3 +1,9 @@
+macro(jetmakeProject)
+    cmake_minimum_required (VERSION 2.6)
+    cmake_policy(SET CMP0054 NEW)
+    cmake_policy(SET CMP0043 NEW)
+endmacro()
+
 macro(subDirList result curdir)
   file(GLOB children ${curdir} ${curdir}/*)
   set(dirlist "")
