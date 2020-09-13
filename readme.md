@@ -122,8 +122,13 @@ be for the rest of project properties.
     startLibDependencies()                  # Dependencies open tag
         setHeadersLibDependency(StdTypes)   # Dependency to headers only lib
         setLibDependency(Panic)             # Dependency to static library
-        setExternalLibDependency(jsoncpp)   # Dependency to external library
+        setExternalLibDependency(jsoncpp)   # Dependency to external library with default name
+        setExternalLibDependency(opencv libopencvcore.dylib libopencv_dnn.dylib) # Same, but with custom libs
     endLibDependencies()                    # Dependencies close tag
+
+
+*Note:*: When external dependency is specified jetmake tries to get
+full path to relevant libs. It never goest down to defaul LDPATH and whatsoever.
 
 ### Subproject close tag
 
