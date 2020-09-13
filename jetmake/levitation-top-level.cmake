@@ -147,7 +147,10 @@ macro (setupCommonLibraries)
             pthread
         )
     else()
-        error( FATAL_ERROR "Undefined platform. Sorry I still need it to be known." )
+        error(
+            "Undefined platform. Sorry I still need it to be known " 
+            "Please use sample in 'toolchains' directory or create your own."
+        )
     endif()
 
     getLevitationCommonLibsVarName(commonLibsVarName)
