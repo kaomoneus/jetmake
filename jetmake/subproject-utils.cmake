@@ -155,18 +155,36 @@ macro(setExternalLibDependency dependencyLib)
     debug("Set external lib dependency ${dependencyLib}")
 
     getLevitationExternalDepsLibDir(libDir ${dependencyLib})
-    set(libPath ${libDir}/lib${dependencyLib}.a)
 
     getLevitationExternalDepsIncludeDir(includeDir ${dependencyLib})
 
     set (EXTRA_INCLUDE_DIRS ${EXTRA_INCLUDE_DIRS} ${includeDir})
     trace("Added include (as external dependency): ${includeDir}")
 
-    set (LEVITATION_DEPENDENCY_LIBS ${LEVITATION_DEPENDENCY_LIBS}
-        ${libPath}
-    )
-    trace("Added lib (as external dependency): ${libPath}")
+    set(customLibs "${ARGN}")
 
+    # TODO: Implement auto extension pickup
+    #   Somewhat like:
+    #   levitationFindLib(${libdir} ${dependencyLib} foundLib)
+
+    list(LENGTH customLibs customLibsLen)
+
+    if (customLibsLen EQUAL 0)
+        trace(" -- No custom libs specified, '${customLibs}', adding with default name...")
+        set(libPath ${libDir}lib${dependencyLib}.a)
+        set (LEVITATION_DEPENDENCY_LIBS ${LEVITATION_DEPENDENCY_LIBS}
+            ${libPath}
+        )
+        trace(" -- Added external dep library: ${libPath}")
+    else()
+        set(libPath)
+        foreach(customLib IN LISTS customLibs)
+            trace(" -- Adding external dep library '${customLib}'")
+            set (LEVITATION_DEPENDENCY_LIBS ${LEVITATION_DEPENDENCY_LIBS}
+                ${libDir}${customLib}
+            )
+        endforeach()
+    endif()
 endmacro()
 
 macro(setHeadersLibDependency dependencyLib)
