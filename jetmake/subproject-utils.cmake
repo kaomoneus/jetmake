@@ -1,6 +1,7 @@
 macro(startLibDependencies)
     set (EXTRA_INCLUDE_DIRS)
     set (LEVITATION_DEPENDENCY_LIBS)
+    set (LEVITATION_SYSTEM_DEP_LIBS)
 endmacro()
 
 macro(endLibDependencies)
@@ -142,8 +143,11 @@ macro (getLevitationExternalDepsLibDir var dependencyName)
     set(${var} "${externalDepsDir}/${dependencyName}/lib/${TARGET_TRIPLE}")
 endmacro()
 
-
+# setLibDependency is used to set dependency to other in-solution library
+#   @param dependencyLib this variable should store a library name
+#
 macro(setLibDependency dependencyLib)
+
     debug("Set lib dependency ${dependencyLib}")
     getProjectIncludeDir(LIB NEW_INCLUDE ${dependencyLib})
     trace("Added include (as dependency): ${NEW_INCLUDE}")
@@ -151,8 +155,11 @@ macro(setLibDependency dependencyLib)
     set (LEVITATION_DEPENDENCY_LIBS ${LEVITATION_DEPENDENCY_LIBS} ${dependencyLib})
 endmacro()
 
+# setExternalLibDependency is used to set dependency to other external library
+#   @param dependencyLib this variable should store a full path to library
+#
 macro(setExternalLibDependency dependencyLib)
-    debug("Set external lib dependency ${dependencyLib}")
+    debug("Set external lib dependency '${dependencyLib}'")
 
     getLevitationExternalDepsLibDir(libDir ${dependencyLib})
 
@@ -175,7 +182,7 @@ macro(setExternalLibDependency dependencyLib)
         set (LEVITATION_DEPENDENCY_LIBS ${LEVITATION_DEPENDENCY_LIBS}
             ${libPath}
         )
-        trace(" -- Added external dep library: ${libPath}")
+        trace(" -- Added external dep library: '${libPath}'")
     else()
         set(libPath)
         foreach(customLib IN LISTS customLibs)
@@ -187,6 +194,22 @@ macro(setExternalLibDependency dependencyLib)
     endif()
 endmacro()
 
+# setSystemLibDependency is used to set dependency to other external library
+#   @param dependencyLib this variable should a name of library without
+#                        'lib' prefix, as you would add it into linker as '-lNAME'
+#
+macro(setSystemLibDependency dependencyLib)
+    debug("Set system lib dependency '${dependencyLib}'")
+
+    set(LEVITATION_SYSTEM_DEP_LIBS ${LEVITATION_SYSTEM_DEP_LIBS}
+        ${dependencyLib}
+    )
+endmacro()
+
+# setHeadersLibDependency is used to set dependency header only library (aka "hpp")
+#                         which is also part of current solution
+#   @param dependencyLib this variable should a name of library
+#
 macro(setHeadersLibDependency dependencyLib)
     debug("Set headers lib dependency ${dependencyLib}")
     getProjectIncludeDir(LIB NEW_INCLUDE ${dependencyLib})
@@ -266,10 +289,16 @@ macro(setupTargetExecutableLinkFlags projectName)
     endif()
 endmacro()
 
+
 macro(setupTargetExecutableLibraries projectName)
+
+
+    findLibs(FOUND_SYSTEM_LIBS LEVITATION_SYSTEM_DEP_LIBS)
+
     getProjectLibraries(libs ${projectName})
     target_link_libraries(${projectName}
         ${libs}
+        ${FOUND_SYSTEM_LIBS}
         ${LEVITATION_COMMON_LIBS}
         ${LEVITATION_DEPENDENCY_LIBS}
     )

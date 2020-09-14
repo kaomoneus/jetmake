@@ -119,7 +119,7 @@ macro(findLibs libsFound osLibraries)
                 ${LIB}
                 PATHS
                 )
-        info("${LIB}... ${LIB_FOUND}")
+        debug("For lib '${LIB}' found '${LIB_FOUND}'")
         list(APPEND ${libsFound} ${LIB_FOUND})
     endforeach(LIB)
 endmacro()
