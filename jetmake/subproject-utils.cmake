@@ -156,7 +156,8 @@ macro(setLibDependency dependencyLib)
 endmacro()
 
 # setExternalLibDependency is used to set dependency to other external library
-#   @param dependencyLib this variable should store a full path to library
+#   @param dependencyLib this variable should store a name of lib relateve to
+#                        'external-libs' directory.
 #
 macro(setExternalLibDependency dependencyLib)
     debug("Set external lib dependency '${dependencyLib}'")
