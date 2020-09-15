@@ -1,3 +1,9 @@
+cmake_policy(SET CMP0011 NEW)
+cmake_policy(SET CMP0028 NEW)
+cmake_policy(SET CMP0054 NEW)
+cmake_policy(SET CMP0043 NEW)
+cmake_policy(SET CMP0074 NEW)
+
 macro(startLibDependencies)
     set (EXTRA_INCLUDE_DIRS)
     set (LEVITATION_DEPENDENCY_LIBS)
@@ -138,10 +144,31 @@ macro (getLevitationExternalDepsIncludeDir var dependencyName)
     set(${var} "${externalDepsDir}/${dependencyName}/include")
 endmacro()
 
-macro (getLevitationExternalDepsLibDir var dependencyName)
+macro (getLevitationExternalDepsRootDir var dependencyName)
     getLevitationExternalDepsDir(externalDepsDir)
-    set(${var} "${externalDepsDir}/${dependencyName}/lib/${TARGET_TRIPLE}")
+    set(${var} "${externalDepsDir}/${dependencyName}")
 endmacro()
+
+macro (getLevitationExternalDepsLibDir var dependencyName)
+
+    trace("getLevitationExternalDepsLibDir...")
+
+    getLevitationExternalDepsDir(externalDepsDir)
+
+    getLevitationExternalDepsRootDir(rootDir ${dependencyName})
+
+    set(${var} "${rootDir}/lib")
+
+    trace("trying '${${var}}'...")
+
+    if (NOT EXISTS "${${var}}")
+        set(${var} "${rootDir}/lib/${TARGET_TRIPLE}")
+        trace("trying '${${var}}'...")
+    endif()
+endmacro()
+
+
+
 
 # setLibDependency is used to set dependency to other in-solution library
 #   @param dependencyLib this variable should store a library name
@@ -179,17 +206,17 @@ macro(setExternalLibDependency dependencyLib)
 
     if (customLibsLen EQUAL 0)
         trace(" -- No custom libs specified, '${customLibs}', adding with default name...")
-        set(libPath ${libDir}lib${dependencyLib}.a)
+        set(libPath ${libDir}/lib${dependencyLib}.a)
         set (LEVITATION_DEPENDENCY_LIBS ${LEVITATION_DEPENDENCY_LIBS}
             ${libPath}
         )
         trace(" -- Added external dep library: '${libPath}'")
     else()
-        set(libPath)
         foreach(customLib IN LISTS customLibs)
-            trace(" -- Adding external dep library '${customLib}'")
+            set(libPath "${libDir}/${customLib}")
+            trace(" -- Adding external dep library '${customLib}': '${libPath}'")
             set (LEVITATION_DEPENDENCY_LIBS ${LEVITATION_DEPENDENCY_LIBS}
-                ${libDir}${customLib}
+                ${libPath}
             )
         endforeach()
     endif()
@@ -206,6 +233,46 @@ macro(setSystemLibDependency dependencyLib)
         ${dependencyLib}
     )
 endmacro()
+
+# setExternalCMakePackageDependency is used to set dependency to library which
+#                                   can be found by findPackage
+#   @param dependencyLib library name to find
+#
+#   Note: you need CMP0074 policy enabled to make it working
+macro(setCMakePackageDependency
+    dependencyLib
+    includeDirsSuffix
+    libsSuffix
+)
+
+    debug("Set CMake package dependency '${dependencyLib}'")
+
+    getLevitationExternalDepsRootDir(rootDir ${dependencyLib})
+
+    if (EXISTS "${rootDir}")
+        set(${dependencyLib}_ROOT ${rootDir})
+    endif()
+
+    find_package(${dependencyLib} REQUIRED)
+
+    debug(" -- Found following libs:")
+
+    foreach(customLib IN LISTS ${dependencyLib}_${libsSuffix})
+        trace("   -- '${customLib}'")
+        set (LEVITATION_DEPENDENCY_LIBS ${LEVITATION_DEPENDENCY_LIBS}
+            ${libDir}${customLib}
+        )
+    endforeach()
+
+    debug(" -- Found following includes:")
+
+    foreach(includeDir IN LISTS ${dependencyLib}_${includeDirsSuffix})
+        trace("   -- '${includeDir}'")
+        set (EXTRA_INCLUDE_DIRS ${EXTRA_INCLUDE_DIRS} ${includeDir})
+    endforeach()
+
+endmacro()
+
 
 # setHeadersLibDependency is used to set dependency header only library (aka "hpp")
 #                         which is also part of current solution
