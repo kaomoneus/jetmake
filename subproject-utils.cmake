@@ -146,7 +146,10 @@ endmacro()
 
 macro (getLevitationExternalDepsRootDir var dependencyName)
     getLevitationExternalDepsDir(externalDepsDir)
-    set(${var} "${externalDepsDir}/${dependencyName}")
+    set(${var} "${externalDepsDir}/${dependencyName}.${CMAKE_BUILD_TYPE}")
+    if (NOT EXISTS "${${var}}")
+        set(${var} "${externalDepsDir}/${dependencyName}")
+    endif()
 endmacro()
 
 macro (getLevitationExternalDepsLibDir var dependencyName)
@@ -250,6 +253,7 @@ macro(setCMakePackageDependency
     getLevitationExternalDepsRootDir(rootDir ${dependencyLib})
 
     if (EXISTS "${rootDir}")
+        debug(" -- Setting root to '${rootDir}'")
         set(${dependencyLib}_ROOT ${rootDir})
     endif()
 
