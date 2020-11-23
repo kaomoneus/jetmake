@@ -197,3 +197,17 @@ macro (createLevitationPackages)
     endif(EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake")
 
 endmacro()
+
+# Initialization
+
+if (NOT CMAKE_CROSSCOMPILING)
+    if (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
+        set(PLATFORM_DARWIN_X86_64 "1")
+        set(PLATFORM_COMPILE_DEFS "DARWIN")
+        set(TARGET_TRIPLE "x86_64-darwin")
+    elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+        set(PLATFORM_LINUX_X86_64 "1")
+        set(PLATFORM_COMPILE_DEFS "LINUX")
+        set(TARGET_TRIPLE "x86_64-linux")
+    endif()
+endif()
